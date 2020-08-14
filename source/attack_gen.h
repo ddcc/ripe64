@@ -38,6 +38,14 @@
 
 #include "parameters.h"
 
+#ifdef __GLIBC__
+#define GET_JMPBUF(x) ((x).__jmpbuf)
+#else
+// Fixes for musl libc
+#include <bits/reg.h>
+#define GET_JMPBUF(x) ((x).__jb)
+#endif
+
 typedef int boolean;
 enum booleans {FALSE=0, TRUE};
 

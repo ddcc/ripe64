@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
   }
   if (dummy_buffer[21]==12)
     printf("%s", dummy_buffer);
-  
+
   jmp_buf stack_jmp_buffer_param;
 
   setenv("param_to_system", "/bin/bash", 1);
@@ -385,19 +385,19 @@ void perform_attack(int (*stack_func_ptr_param)(const char *),
           target_addr = &data_struct.func_ptr;
           break;
         case LONGJMP_BUF_STACK_VAR:
-          target_addr = &stack_jmp_buffer[0].__jmpbuf[7];
+          target_addr = &(GET_JMPBUF(stack_jmp_buffer[0])[7]);
           break;
         case LONGJMP_BUF_STACK_PARAM:
-          target_addr = &stack_jmp_buffer_param[0].__jmpbuf[7];
+          target_addr = &(GET_JMPBUF(stack_jmp_buffer_param[0])[7]);
           break;
         case LONGJMP_BUF_HEAP:
-          target_addr = &(*heap_jmp_buffer)[0].__jmpbuf[7];
+          target_addr = &(GET_JMPBUF((*heap_jmp_buffer)[0])[7]);
           break;
         case LONGJMP_BUF_BSS:
-          target_addr = &bss_jmp_buffer[0].__jmpbuf[7];
+          target_addr = &(GET_JMPBUF(bss_jmp_buffer[0])[7]);
           break;
         case LONGJMP_BUF_DATA:
-          target_addr = &data_jmp_buffer[0].__jmpbuf[7];
+          target_addr = &(GET_JMPBUF(data_jmp_buffer[0])[7]);
           break;
         default:
           if (output_error_msg) {
@@ -581,19 +581,19 @@ void perform_attack(int (*stack_func_ptr_param)(const char *),
           payload.overflow_ptr = &data_struct.func_ptr;
           break;
         case LONGJMP_BUF_STACK_VAR:
-          payload.overflow_ptr = &stack_jmp_buffer[0].__jmpbuf[7];
+          target_addr = &(GET_JMPBUF(stack_jmp_buffer[0])[7]);
           break;
         case LONGJMP_BUF_STACK_PARAM:
-          payload.overflow_ptr = &stack_jmp_buffer_param[0].__jmpbuf[7];
+          target_addr = &(GET_JMPBUF(stack_jmp_buffer_param[0])[7]);
           break;
         case LONGJMP_BUF_HEAP:
-          payload.overflow_ptr = &(*heap_jmp_buffer)[0].__jmpbuf[7];
+          target_addr = &(GET_JMPBUF((*heap_jmp_buffer)[0])[7]);
           break;
         case LONGJMP_BUF_BSS:
-          payload.overflow_ptr = &bss_jmp_buffer[0].__jmpbuf[7];
+          target_addr = &(GET_JMPBUF(bss_jmp_buffer[0])[7]);
           break;
         case LONGJMP_BUF_DATA:
-          payload.overflow_ptr = &data_jmp_buffer[0].__jmpbuf[7];
+          target_addr = &(GET_JMPBUF(data_jmp_buffer[0])[7]);
           break;
         default:
           if (output_error_msg) {
