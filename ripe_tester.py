@@ -161,12 +161,22 @@ if not os.path.exists("/tmp/ripe-eval"):
   os.system("mkdir /tmp/ripe-eval")
 
 for compiler in compilers:
-  total_ok = 0
-  total_fail = 0
-  total_some = 0
-  total_np = 0
-  for tech in techniques:
-    for loc in locations:
+  results[compiler] = {
+    'total_ok': 0,
+    'total_fail': 0,
+    'total_some': 0,
+    'total_np': 0
+  }
+
+  for loc in locations:
+    results[compiler][loc] = {
+      'ok' : 0,
+      'fail' : 0,
+      'some' : 0,
+      'np' : 0,
+    }
+
+    for tech in techniques:
       for ptr in code_ptr:
         for attack in attacks:
           for func in funcs:
@@ -204,7 +214,7 @@ for compiler in compilers:
                 os.system("rm /tmp/ripe-eval/f_xxxx")
 
             if attack_possible == 0:
-              total_np += 1
+              results[compiler][loc]['np'] += 1
               continue
 
             # SUCCESS
@@ -214,7 +224,7 @@ for compiler in compilers:
                     green("OK", 4),
                     s_attempts,repeat_times,
                     ' '.join(Set(additional_info))))
-              total_ok += 1
+              results[compiler][loc]['ok'] += 1
             # FAIL
             elif s_attempts == 0:
               additional_info = analyze_log2(additional_info)
@@ -223,7 +233,7 @@ for compiler in compilers:
                      red("FAIL", 4),
                      s_attempts, repeat_times,
                      ' '.join(Set(additional_info))))
-              total_fail += 1
+              results[compiler][loc]['fail'] += 1
             # SOME
             else:
               if print_SOME:
@@ -232,28 +242,31 @@ for compiler in compilers:
                     orange("SOME", 4),
                     s_attempts,repeat_times,
                     ' '.join(Set(additional_info))))
-              total_some += 1
+              results[compiler][loc]['some'] += 1
 
+    results[compiler]['total_ok'] += results[compiler][loc]['ok']
+    results[compiler]['total_fail'] += results[compiler][loc]['fail']
+    results[compiler]['total_some'] += results[compiler][loc]['some']
+    results[compiler]['total_np'] += results[compiler][loc]['np']
 
-  results[compiler] = {
-          'total_ok': total_ok,
-          'total_fail': total_fail,
-          'total_some': total_some,
-          'total_np': total_np}
-
-total_attacks = total_ok + total_some + total_fail + total_np
 if "bash" in summary_format:
   for compiler in results:
     print("\n"+bold("||Summary "+compiler+"||"))
+    total = results[compiler][loc]['ok'] + results[compiler][loc]['some'] + results[compiler][loc]['fail']
+    for loc in locations:
+      print("%s: OK: %s, SOME: %s, FAIL: %s, NP: %s, Total: %s" % (loc, results[compiler][loc]['ok'], results[compiler][loc]['some'], results[compiler][loc]['fail'], results[compiler][loc]['np'], total))
+
     total_attacks = results[compiler]["total_ok"] + results[compiler]["total_some"] + results[compiler]["total_fail"]
     print("OK: %s SOME: %s FAIL: %s NP: %s Total Attacks: %s\n\n"% (
       results[compiler]["total_ok"], results[compiler]["total_some"], results[compiler]["total_fail"],
       results[compiler]["total_np"], total_attacks))
 
+
 if "latex" in summary_format:
   print("\\begin{tabular}{|c|c|c|c|}\\hline\n"
     "\\thead{Setup} & \\thead{Functional \\\\ attacks} & \\thead{Partly functional \\\\ attacks} & \\thead{Nonfunctional \\\\ attacks}\\\\\\hline\\hline\n")
   for compiler in results:
+    total_attacks = results[compiler]["total_ok"] + results[compiler]["total_some"] + results[compiler]["total_fail"]
     print(" (%s) & %s (%s\\%%) & %s (%s\\%%) & %s (%s\\%%) \\\\ \\hline\n"% (
       compiler,
       results[compiler]["total_ok"], int(round((100.0*results[compiler]["total_ok"])/ total_attacks)),
