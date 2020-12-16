@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 # Updated version of program developed by Hubert ROSIER
 # to assist the automated testing using the 64b port of the RIPE evaluation tool
 #
