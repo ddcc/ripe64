@@ -18,6 +18,7 @@
 import os
 import sys
 from sets import Set
+import time
 
 compilers = ["gcc", "clang"]
 
@@ -200,6 +201,7 @@ for compiler in compilers:
 
               cmdline = "(echo \"touch /tmp/ripe-eval/f_xxxx\" | ./build/"+compiler+"_attack_gen "+parameters_str+" >> /tmp/ripe_log 2>&1) 2> /tmp/ripe_log2"+str(i)
               os.system(cmdline)
+              time.sleep(1)
 
               log_entry = open("/tmp/ripe_log","r").read()
               if log_entry.find("Impossible") != -1:
