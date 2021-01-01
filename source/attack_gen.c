@@ -167,9 +167,10 @@ void perform_attack(int (*stack_func_ptr_param)(const char *),
   /* Two buffers declared to be able to chose buffer that gets allocated    */
   /* first on the heap. The other buffer will be set as a target, i.e. a    */
   /* heap array of function pointers.                                       */
-  char *heap_buffer1 = (char *)malloc(256 + sizeof(uintptr_t));
-  char *heap_buffer2 = (char *)malloc(256 + sizeof(uintptr_t));
-  char *heap_buffer3 = (char *)malloc(128 + sizeof(uintptr_t));
+  char *heap_buffer = (char *)malloc(256 + sizeof(uintptr_t) + 256 + sizeof(uintptr_t) + 128 + sizeof(uintptr_t));
+  char *heap_buffer1 = heap_buffer;
+  char *heap_buffer2 = heap_buffer1 + 256 + sizeof(uintptr_t);
+  char *heap_buffer3 = heap_buffer2 + 256 + sizeof(uintptr_t);
   /* Check that malloc went fine */
   if (heap_buffer1 == NULL || heap_buffer2 == NULL || heap_buffer3 == NULL) {
     fprintf(stderr,"Error. Unable to allocate heap memory.\n");
